@@ -1,13 +1,15 @@
 import time
-from django.test import LiveServerTestCase
+
+from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
+from selenium.common import NoSuchElementException
 from selenium.webdriver import Keys
 from selenium.webdriver.common.by import By
 
 MAX_WAIT = 10
 
 
-class NewVisitorTest(LiveServerTestCase):
+class NewVisitorTest(StaticLiveServerTestCase):
     def setUp(self):
         self.browser = webdriver.Chrome()
 
@@ -22,7 +24,7 @@ class NewVisitorTest(LiveServerTestCase):
                 rows = table.find_elements(By.TAG_NAME, "tr")
                 self.assertIn(row_text, [row.text for row in rows])
                 return
-            except AssertionError as e:
+            except NoSuchElementException as e:
                 if time.time() - start_time > MAX_WAIT:
                     raise e
                 time.sleep(0.5)
@@ -51,8 +53,6 @@ class NewVisitorTest(LiveServerTestCase):
 
         self.wait_for_row_in_list_table("1: Buy Flowers")
         self.wait_for_row_in_list_table("2: Give a gift to Lisi")
-
-        self.fail("Finish the test!")
 
     def test_multiple_users_can_start_lists_at_different_urls(self):
         self.browser.get(self.live_server_url)
@@ -95,4 +95,3 @@ class NewVisitorTest(LiveServerTestCase):
             512,
             delta=10,
         )
-
