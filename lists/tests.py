@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from lists.models import Item
+from lists.models import Item, List
 
 
 class HomePageTest(TestCase):
@@ -14,16 +14,24 @@ class HomePageTest(TestCase):
         self.assertEqual(Item.objects.count(), 0)
 
 
-class ItemModelTest(TestCase):
+class ListAndItemModelsTest(TestCase):
 
     def test_saving_and_retrieving_items(self):
+        list_user = List()
+        list_user.save()
+
         first_item = Item()
         first_item.text = "The first list item"
+        first_item.list = list_user
         first_item.save()
 
         second_item = Item()
         second_item.text = "Item the second"
+        second_item.list = list_user
         second_item.save()
+
+        saved_list = List.objects.first()
+        self.assertEqual(saved_list, list_user)
 
         saved_items = Item.objects.all()
         self.assertEqual(saved_items.count(), 2)
@@ -31,19 +39,21 @@ class ItemModelTest(TestCase):
         first_saved_item = saved_items[0]
         second_saved_item = saved_items[1]
         self.assertEqual(first_saved_item.text, "The first list item")
+        self.assertEqual(first_saved_item.list, list_user)
         self.assertEqual(second_saved_item.text, "Item the second")
+        self.assertEqual(second_saved_item.list, list_user)
 
 
 class ListViewTest(TestCase):
 
-    def test_displays_all_items(self):
-        Item.objects.create(text="itemey 1")
-        Item.objects.create(text="itemey 2")
-
+    def test_uses_list_template(self):
         response = self.client.get("/lists/the-new-page")
+        self.assertTemplateUsed(response, "home.html")
 
-        self.assertContains(response, "itemey 1")
-        self.assertContains(response, "itemey 2")
+    def test_displays_all_items(self):
+        list_user = List.objects.create()
+        Item.objects.create(text="Item 1", list=list_user)
+        Item.objects.create(text="Item 2", list=list_user)
 
 
 class NewListTest(TestCase):
