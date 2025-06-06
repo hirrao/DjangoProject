@@ -15,9 +15,9 @@ class NewVisitorTest(unittest.TestCase):
 
     def test_can_start_a_list_and_retrieve_it_later(self):
         self.browser.get("http://127.0.0.1:8000/")
-        self.assertIn("TO-DO", self.browser.title)
+        self.assertIn("To-Do", self.browser.title)
         header_text = self.browser.find_element(By.TAG_NAME,"h1").text
-        self.assertIn("TO-DO", header_text)
+        self.assertIn("To-Do", header_text)
 
         inputbox = self.browser.find_element(By.ID, "id_new_item")
         self.assertEqual(inputbox.get_attribute("placeholder"), "Enter a to-do item")
