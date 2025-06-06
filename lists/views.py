@@ -4,21 +4,21 @@ from lists.models import Item, List
 
 
 def home_page(request):
-    if request.method == "POST":
-        new_item_text = request.POST["item_text"]
-        Item.objects.create(text=new_item_text)
-        return redirect("/lists/the-new-page")
-
-    items = Item.objects.all()
     return render(request, "home.html")
 
 
 def new_list(request):
     list_user = List.objects.create()
     Item.objects.create(text=request.POST["item_text"], list=list_user)
-    return redirect("/lists/the-new-page")
+    return redirect(f"/lists/{list_user.id}/")
 
 
-def view_list(request):
-    items = Item.objects.all()
-    return render(request, "home.html", {"items": items})
+def view_list(request, list_id):
+    list_user = List.objects.get(id=list_id)
+    return render(request, "list.html", {"list": list_user})
+
+
+def add_item(request, list_id):
+    list_user = List.objects.get(id=list_id)
+    Item.objects.create(text=request.POST["item_text"], list=list_user)
+    return redirect(f"/lists/{list_id}/")
