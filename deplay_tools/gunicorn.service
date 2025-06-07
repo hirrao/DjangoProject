@@ -2,10 +2,10 @@
 Description=Gunicorn Service for note
 
 [Service]
-restart=on-failure
+Restart=on-failure
 User=hirrao
-WorkingDirectory=/home/hirrao/www/notes
-ExecStart=./venv/bin/gunicorn --bind unix:/tmp/note.socket notes.wsgi:application
+WorkingDirectory=/home/hirrao/www/note.hirrao.cn/source
+ExecStart=/home/hirrao/www/note.hirrao.cn/venv/bin/gunicorn --bind unix:/tmp/note.socket notes.wsgi:application
 
 [Install]
 WantedBy=multi-user.target
