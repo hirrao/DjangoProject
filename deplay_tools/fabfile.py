@@ -28,8 +28,7 @@ def _create_directories(c, site_folder):
 
 def _get_latest_source(c, source_folder):
     if c.run(f"test -d {source_folder}/.git", warn=True).ok:
-        pass
-    #        c.run(f"cd {source_folder} && git fetch")
+        c.run(f"cd {source_folder} && git fetch")
 
     else:
         c.run(f"git clone {REPO_URL} {source_folder}")
@@ -40,7 +39,8 @@ def _get_latest_source(c, source_folder):
 def _update_settings(c, source_folder, site_name):
     settings_path = source_folder + "/notes/settings.py"
     c.run(f"sed -i 's/DEBUG = True/DEBUG = False/' {settings_path}")
-    c.run(f"sed -i \"s/ALLOWED_HOSTS =.+$/ALLOWED_HOSTS = ['{site_name}']/\" {settings_path}")
+    c.run(f"sed -i \"s/^ALLOWED_HOSTS *=.*$/ALLOWED_HOSTS = ['{site_name}']/\" {settings_path}")
+    c.run(f"sed -i \"s#^CSRF_TRUSTED_ORIGINS *=.*#$CSRF_TRUSTED_ORIGINS = ['https://{site_name}']#\" {settings_path}")
     secret_key_file = source_folder + "/notes/secret_key.py"
     if not exists(secret_key_file):
         chars = "abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)"
