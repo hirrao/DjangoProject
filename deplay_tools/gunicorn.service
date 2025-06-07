@@ -1,0 +1,11 @@
+[Unit]
+Description=Gunicorn Service for note
+
+[Service]
+restart=on-failure
+User=hirrao
+WorkingDirectory=/home/hirrao/workspace/code/note
+ExecStart=/home/hirrao/miniconda3/envs/note/bin/gunicorn --bind unix:/tmp/note.socket notes.wsgi:application
+
+[Install]
+WantedBy=multi-user.target
